@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.neighbors import KNeighborsClassifier
-from models.wine_sample import WineSample
+from wine_sample import WineSample
 
 class WineDataset:
     """
@@ -45,3 +45,24 @@ class WineDataset:
 
         self.model = KNeighborsClassifier(n_neighbors=3)
         self.model.fit(X, y)
+    
+    def predict(self, sample:WineSample):
+        """
+        Predict the class of a wine sample
+        """
+        if self.model is None:
+            raise ValueError("Model not trained.")
+        
+        feature_vector = [list(sample.features.values())]
+        return self.model.predict(feature_vector)[0]
+    
+    def get_summary_stats(self):
+        """
+        Compute summary statistics for dataset.
+        """
+        if self.df is None:
+            raise ValueError("Dataset not loaded.")
+        return{
+            col: self.df[col].mean()
+            for col in self.df.columns if col != "target"
+        }
