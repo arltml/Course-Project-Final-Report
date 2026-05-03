@@ -103,4 +103,15 @@ class WineDataset:
             col: self.df[col].mean()
             for col in self.df.columns if col != "target"
         }
+    def get_feature_ranges(self):
+        """
+        Compute the minimum and maximum value for each feature
+        """
+        if self.df is None:
+            raise ValueError("Dataset not loaded")
+        
+        return {
+            col: (self.df[col].min(), self.df[col].max())
+            for col in self.df.columns if col != "target"
+        }
     
