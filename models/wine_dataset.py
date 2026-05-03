@@ -128,5 +128,20 @@ class WineDataset:
             else:
                 distribution[label] = 1
         return distribution
-    
+    def get_feature_matrix(self):
+        """
+        Return the dataset features as a list of  lists using list comprehension
+        """
+        return [list(sample.features.values())]
+    def get_average_alcohol(self):
+        """
+        Normalize features using NumPy/Pandas calculations
+        """
+        if self.df is None:
+            raise ValueError("Dataset not loaded")
+        
+        features = self.df.drop("target", axis=1)
+        normalized = (features - features.mean() / features.std())
+
+        return normalized
     
