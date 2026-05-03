@@ -114,4 +114,19 @@ class WineDataset:
             col: (self.df[col].min(), self.df[col].max())
             for col in self.df.columns if col != "target"
         }
+    def get_class_distribution(self):
+        """
+        Count how many wine samples belong to each class.
+        """
+        distribution = {}
+
+        for sample in self.samples:
+            label = sample.label
+
+            if label in distribution:
+                distribution[label] += 1
+            else:
+                distribution[label] = 1
+        return distribution
+    
     
