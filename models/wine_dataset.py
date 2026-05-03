@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+import statistics
 from sklearn.neighbors import KNeighborsClassifier
 from wine_sample import WineSample
 
@@ -65,7 +67,28 @@ class WineDataset:
         return{
             col: self.df[col].mean()
             for col in self.df.columns if col != "target"
-        }            vector = [list(sample.features.values())]
+        }
+    def train_model(self, k=3):
+        """
+        Train a K-nearest neighbors classifier
+        """
+        if self.df is None:
+            raise ValueError("Dataset not loaded")
+        
+        X = self.df.drop("target", axis=1)
+        y = self.df["target"]
+
+        self.model = KNeighborsClassifier(n_neighbors=k)
+        self.model.fit(X,y)
+    def predict(self, sample: WineSample):
+        """
+        Predict wine class given  WineSample object
+        """
+        if self.model is None:
+            raise ValueError("Model not trained")
+        
+        try:
+            vector = [list(sample.features.values())]
             return int(self.model.predict(vector)[0])
         except Exception as e:
             raise RuntimeError(f"Prediction failed: {e}")
@@ -73,3 +96,11 @@ class WineDataset:
         """
         Calculate the mean of each feature in the dataset.
         """
+        if self.df is None:
+            raise ValueError("Dataset not loaded")
+        
+        return{
+            col: self.df[col].mean()
+            for col in self.df.columns if col != "target"
+        }
+    
