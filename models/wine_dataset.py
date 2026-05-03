@@ -68,6 +68,7 @@ class WineDataset:
             col: self.df[col].mean()
             for col in self.df.columns if col != "target"
         }
+    
     def train_model(self, k=3):
         """
         Train a K-nearest neighbors classifier
@@ -80,6 +81,7 @@ class WineDataset:
 
         self.model = KNeighborsClassifier(n_neighbors=k)
         self.model.fit(X,y)
+
     def predict(self, sample: WineSample):
         """
         Predict wine class given  WineSample object
@@ -92,6 +94,7 @@ class WineDataset:
             return int(self.model.predict(vector)[0])
         except Exception as e:
             raise RuntimeError(f"Prediction failed: {e}")
+        
     def get_summary_stats(self):
         """
         Calculate the mean of each feature in the dataset.
@@ -103,6 +106,7 @@ class WineDataset:
             col: self.df[col].mean()
             for col in self.df.columns if col != "target"
         }
+    
     def get_feature_ranges(self):
         """
         Compute the minimum and maximum value for each feature
@@ -114,6 +118,7 @@ class WineDataset:
             col: (self.df[col].min(), self.df[col].max())
             for col in self.df.columns if col != "target"
         }
+    
     def get_class_distribution(self):
         """
         Count how many wine samples belong to each class.
@@ -128,11 +133,13 @@ class WineDataset:
             else:
                 distribution[label] = 1
         return distribution
+    
     def get_feature_matrix(self):
         """
         Return the dataset features as a list of  lists using list comprehension
         """
         return [list(sample.features.values())]
+    
     def get_average_alcohol(self):
         """
         Normalize features using NumPy/Pandas calculations
@@ -144,4 +151,42 @@ class WineDataset:
         normalized = (features - features.mean() / features.std())
 
         return normalized
+    
+    def feature_correlation(self):
+        """
+        Compute the correlation matric for the wine dataset
+        """
+        if self.df is None:
+            raise ValueError("Dataset not loaded")
+
+        return self.df.corr()
+    
+    def describe_with_statistics_module(self):
+        """
+        Use built-in stats module to summarize alcohol values
+        """
+        alcohol_values = [sample.features["alcohol"] for sample in self.samples]
+
+        return {
+            "mean": statistics.mean(alcohol_values),
+            "median": statistics.median(alcohol_values),
+            "stdev": statistics.stdev(alcohol_values)
+        }
+    
+    def pair_features_with_names(self):
+        """
+        Use zip and enumerate to pair feature names with values
+        """
+        if self.df is None or len(self.samples) ==0:
+            raise ValueError("Dataset not loaded")
+        
+        feature_names = list(self.df.columns[:-1])
+        first_sample = self.samples[0]
+
+        paired = []
+
+        for i, (name,value) in enumerate(zip(feature_names, first_sample.features.values())):
+            paired.append((i, name, value))
+
+        return paired
     
