@@ -65,4 +65,11 @@ class WineDataset:
         return{
             col: self.df[col].mean()
             for col in self.df.columns if col != "target"
-        }
+        }            vector = [list(sample.features.values())]
+            return int(self.model.predict(vector)[0])
+        except Exception as e:
+            raise RuntimeError(f"Prediction failed: {e}")
+    def get_summary_stats(self):
+        """
+        Calculate the mean of each feature in the dataset.
+        """
